@@ -5,12 +5,15 @@ class Neuron:
 
     def __init__(self, nin):
         self.w = [Value(random.uniform(-1,1)) for _ in range(nin)]
-        self.b = [Value(random.uniform(-1,1))]
+        self.b = Value(random.uniform(-1,1))
 
     def __call__(self, x):
         # create activation as wx + b, then apply tanh on it
+        a = sum(wi*xi for wi, xi in zip(self.w, x))
+        b = self.b
+
         activation = sum(wi*xi for wi, xi in zip(self.w, x)) + self.b
-        return act.tanh()
+        return activation.tanh()
     
     def parameters(self):
         return self.w + [self.b]
@@ -25,7 +28,7 @@ class Layer:
         return outs[0] if len(outs) == 1 else outs
     
     def parameters(self):
-        return [p for neuron in self.neurons for p in neuron.parameters]
+        return [p for neuron in self.neurons for p in neuron.parameters()]
 
 class MLP:
 
@@ -39,4 +42,4 @@ class MLP:
         return x
     
     def parameters(self):
-        return [p for layer in self.layers for p in layers.parameters()]
+        return [p for layer in self.layers for p in layer.parameters()]

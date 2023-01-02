@@ -15,7 +15,7 @@ class Value:
     
     def __add__(self, other):
         other = other if isinstance(other, Value) else Value(other)
-        
+
         out = Value(data = self.data + other.data, 
                     _children = (self, other),
                     _op='+')
@@ -41,18 +41,6 @@ class Value:
         out._backward = _backward
         
         return out
-    
-    def __rmul__(self, other): # other * self
-        return self * other
-    
-    def __truediv__(self, other): # self / other
-        return self * other**-1
-    
-    def __neg__(self): # -self
-        return self * -1
-    
-    def __sub__(self, other): # self - other
-        return self + (-other)
     
     def __pow__(self, other):
         assert isinstance(other, (int, float)), "only supporting int or float powers for now"
@@ -106,3 +94,24 @@ class Value:
         self.grad = 1.0
         for n in reversed(topo):
             n._backward()
+        
+    def __neg__(self): # -self
+        return self * -1
+    
+    def __radd__(self, other): #other + self
+        return self + other
+
+    def __sub__(self, other): # self - other
+        return self + (-other)
+
+    def __rsub__(self, other): # other - self
+        return other + (-self)
+    
+    def __rmul__(self, other): # other * self
+        return self * other
+    
+    def __truediv__(self, other): # self / other
+        return self * other**-1
+
+    def __rtruedive__(self, other): # other / self
+        return other * self**-1
